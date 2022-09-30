@@ -1,24 +1,21 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { Sapper } from './logic/sapper';
 
 function App() {
+  const ref = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    if (ref.current) {
+      const sapper = new Sapper(ref.current)
+      sapper.draw()
+    }
+  }, [ref])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <canvas width={400} height={400} ref={ref}/>
     </div>
   );
 }
