@@ -11,7 +11,7 @@ export class Grid extends Draw {
     for (let x = 0; x < Math.round(this.width / this.step); x ++) {
       for(let y = 0; y < Math.round(this.height / this.step); y++) {
         const sX = x * this.step
-        const sY = y + this.step
+        const sY = y * this.step
         this.map.set(this.getKey({x: sX, y: sY}), {x: sX, y: sY})
       }
     }
