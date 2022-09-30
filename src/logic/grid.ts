@@ -1,10 +1,9 @@
 import { Bombs } from "./bomb";
-import { CellNumber, CellNumberData } from "./cellNumber";
+import { CellNumber } from "./cellNumber";
 import { Draw } from "./draw";
 import { EventNames, Position } from "./sapper";
 
 type CellClickData = {
-  mapPassed?: Map<string, Position>
   isBombClick?: boolean
 }
 
@@ -12,6 +11,8 @@ export type CellClickEvent = CustomEvent<CellClickData>
 
 export class Grid extends Draw {
   readonly map = new Map<string, Position>()
+  mapPassed = new Map<string, Position>();
+
   clickedPosition: Position = {x: 0, y: 0}
 
   initGrid() {
@@ -37,6 +38,8 @@ export class Grid extends Draw {
     }
     this.ctx.stroke()
     this.ctx.closePath()
+
+    this.drawPassed()
   }
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
@@ -71,29 +74,37 @@ export class Grid extends Draw {
 
   emptyCellClick(numbers: CellNumber) {
     const queue: Position[] = [this.clickedPosition]
-    const mapPassed = new Map<string, Position>()
     let count = 0
     
     while(queue.length > 0 && count < 1000) {
       count++
       const position = (queue.pop() as Position)
       const parents = this.getParents(position, this.map)
-      mapPassed.set(this.getKey(position), {...position})
+      this.mapPassed.set(this.getKey(position), {...position})
 
       parents.forEach(parent => {
-        if (mapPassed.has(this.getKey(parent))) return
+        if (this.mapPassed.has(this.getKey(parent))) return
         if (!numbers.cellNumbers.has(this.getKey(parent))) {
           queue.push(parent)
         }
       })
     }
 
-    mapPassed.forEach(elem => {
+    this.mapPassed.forEach(elem => {
       const numberParents = this.getParents(elem, numbers.cellNumbers)
       numberParents.forEach(number => numbers.setDrawNumber(number))
     })
 
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapPassed}, bubbles: true})
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {}, bubbles: true})
     this.canvas.dispatchEvent(event)
+  }
+
+  drawPassed() {
+    this.ctx.beginPath()
+    this.mapPassed.forEach(passed => {
+      this.ctx.fillStyle = 'black'
+      this.ctx.fillRect(passed.x, passed.y, this.step, this.step)
+    })
+    this.ctx.closePath()
   }
 }
