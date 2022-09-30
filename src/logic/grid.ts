@@ -5,7 +5,6 @@ import { EventNames, Position } from "./sapper";
 
 type CellClickData = {
   mapPassed?: Map<string, Position>
-  mapNumber?: Map<string, CellNumberData>
   isBombClick?: boolean
 }
 
@@ -64,13 +63,9 @@ export class Grid extends Draw {
   }
 
   numberCellClick(cellNumber: CellNumber, position: Position) {
-    const numberData = cellNumber.cellNumbers.get(this.getKey(position))
-    const mapNumber = new Map<string, CellNumberData>()
-    if (numberData) {
-      mapNumber.set(this.getKey(position), {...numberData})
-    }
+    cellNumber.setDrawNumber(position)
 
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapNumber}, bubbles: true})
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {}, bubbles: true})
     this.canvas.dispatchEvent(event)
   }
 
@@ -93,17 +88,12 @@ export class Grid extends Draw {
       })
     }
 
-    const mapNumber = new Map<string, CellNumberData>()
-
     mapPassed.forEach(elem => {
       const numberParents = this.getParents(elem, numbers.cellNumbers)
-
-      numberParents.forEach(number => {
-        mapNumber.set(this.getKey(number), {...number})
-      })
+      numberParents.forEach(number => numbers.setDrawNumber(number))
     })
 
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapPassed, mapNumber}, bubbles: true})
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapPassed}, bubbles: true})
     this.canvas.dispatchEvent(event)
   }
 }

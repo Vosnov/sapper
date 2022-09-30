@@ -9,6 +9,7 @@ export type CellNumberData = {
 
 export class CellNumber extends Draw {
   cellNumbers = new Map<string, CellNumberData>()
+  drawCellNumbers = new Map<string, CellNumberData>()
 
   public getBombsCount(grid: Grid['map'], bombs: Bombs['bombsMap']) {
 
@@ -23,11 +24,18 @@ export class CellNumber extends Draw {
     })
   }
 
-  draw(cellNumbers = this.cellNumbers) {
+  setDrawNumber(position: Position) {
+    const cell = this.cellNumbers.get(this.getKey(position))
+    if (cell) {
+      this.drawCellNumbers.set(this.getKey(cell), {...cell})
+    }
+  }
+
+  draw() {
     this.ctx.beginPath()
     const fontSize = 32;
     this.ctx.font = `${fontSize}px serif`;
-    cellNumbers.forEach((cell) => {
+    this.drawCellNumbers.forEach((cell) => {
       this.ctx.fillStyle = 'green'
       this.ctx.fillText(`${cell.count}`, cell.x + (this.step / 2) - (fontSize / 4), cell.y + (this.step / 2) + (fontSize / 3))
     })

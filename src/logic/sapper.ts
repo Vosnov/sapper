@@ -37,7 +37,6 @@ export class Sapper extends Draw {
     this.grid.setEventListeners(this.cellNumbers, this.bombs)
 
     this.canvas.addEventListener(EventNames.CellClick, (((e: CellClickEvent) => {
-      e.detail.mapNumber?.forEach((value, key) => this.mapNumber.set(key, value))
       e.detail.mapPassed?.forEach((value, key) => this.mapPassed.set(key, value))
       if (e.detail.isBombClick) this.isBombClick = e.detail.isBombClick
 
@@ -49,7 +48,7 @@ export class Sapper extends Draw {
     this.clear()
     this.grid.draw()
 
-    this.cellNumbers.draw(this.mapNumber)
+    this.cellNumbers.draw()
     this.drawPassed()
     if (this.isBombClick) this.bombs.draw()
   }
