@@ -6,6 +6,7 @@ import { EventNames, Position } from "./sapper";
 type CellClickData = {
   mapPassed?: Map<string, Position>
   mapNumber?: Map<string, CellNumberData>
+  isBombClick?: boolean
 }
 
 export type CellClickEvent = CustomEvent<CellClickData>
@@ -43,22 +44,26 @@ export class Grid extends Draw {
     this.canvas.addEventListener('mousedown', (e) => {
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
-      // console.log(this.clickedPosition, numbers.cellNumbers)
 
       if (bombs.bombsMap.has(this.getKey(this.clickedPosition))) {
-        console.log('dead')
+        this.deadCellClick()
         return;
       }
 
       if (numbers.cellNumbers.has(this.getKey(this.clickedPosition))) {
-        this.openNumberCell(numbers, this.clickedPosition)
+        this.numberCellClick(numbers, this.clickedPosition)
       } else {
-        this.openNumberCells(numbers)
+        this.emptyCellClick(numbers)
       }
     })
   }
 
-  openNumberCell(cellNumber: CellNumber, position: Position) {
+  deadCellClick() {
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {isBombClick: true}, bubbles: true})
+    this.canvas.dispatchEvent(event)
+  }
+
+  numberCellClick(cellNumber: CellNumber, position: Position) {
     const numberData = cellNumber.cellNumbers.get(this.getKey(position))
     const mapNumber = new Map<string, CellNumberData>()
     if (numberData) {
@@ -69,7 +74,7 @@ export class Grid extends Draw {
     this.canvas.dispatchEvent(event)
   }
 
-  openNumberCells(numbers: CellNumber) {
+  emptyCellClick(numbers: CellNumber) {
     const queue: Position[] = [this.clickedPosition]
     const mapPassed = new Map<string, Position>()
     let count = 0

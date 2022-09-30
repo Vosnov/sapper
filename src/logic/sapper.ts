@@ -20,6 +20,7 @@ export class Sapper extends Draw {
 
   mapPassed = new Map<string, Position>()
   mapNumber = new Map<string, CellNumberData>()
+  isBombClick = false
 
   constructor(public canvas: HTMLCanvasElement) {
     super(canvas, 40)
@@ -38,6 +39,8 @@ export class Sapper extends Draw {
     this.canvas.addEventListener(EventNames.CellClick, (((e: CellClickEvent) => {
       e.detail.mapNumber?.forEach((value, key) => this.mapNumber.set(key, value))
       e.detail.mapPassed?.forEach((value, key) => this.mapPassed.set(key, value))
+      if (e.detail.isBombClick) this.isBombClick = e.detail.isBombClick
+
       this.draw()
     }) as EventListener))
   }
@@ -48,6 +51,7 @@ export class Sapper extends Draw {
 
     this.cellNumbers.draw(this.mapNumber)
     this.drawPassed()
+    if (this.isBombClick) this.bombs.draw()
   }
 
   drawPassed() {
