@@ -37,7 +37,7 @@ export class Bombs extends Draw {
       })
 
       const bomb = this.createBomb(freePositions)
-      this.bombsMap.set(`x${bomb.x}y${bomb.y}`, bomb)
+      this.bombsMap.set(this.getKey(bomb), bomb)
     }
   }
 }

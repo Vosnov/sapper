@@ -10,7 +10,9 @@ export class Grid extends Draw {
   initGrid() {
     for (let x = 0; x < Math.round(this.width / this.step); x ++) {
       for(let y = 0; y < Math.round(this.height / this.step); y++) {
-        this.map.set(`x${x * this.step}y${y * this.step}`, {x: x* this.step, y: y * this.step})
+        const sX = x * this.step
+        const sY = y + this.step
+        this.map.set(this.getKey({x: sX, y: sY}), {x: sX, y: sY})
       }
     }
   }
@@ -36,12 +38,12 @@ export class Grid extends Draw {
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
       console.log(this.clickedPosition, numbers.cellNumbers)
 
-      if (bombs.bombsMap.has(`x${this.clickedPosition.x}y${this.clickedPosition.y}`)) {
+      if (bombs.bombsMap.has(this.getKey(this.clickedPosition))) {
         console.log('dead')
         return;
       }
 
-      if (numbers.cellNumbers.has(`x${this.clickedPosition.x}y${this.clickedPosition.y}`)) {
+      if (numbers.cellNumbers.has(this.getKey(this.clickedPosition))) {
         this.openNumberCell()
       } else {
         this.openNumberCells(numbers)
@@ -62,11 +64,11 @@ export class Grid extends Draw {
       count++
       const position = (queue.pop() as Position)
       const parents = this.getParents(position, this.map)
-      passed.set(`x${position.x}y${position.y}`, position)
+      passed.set(this.getKey(position), position)
 
       parents.forEach(parent => {
-        if (passed.has(`x${parent.x}y${parent.y}`)) return
-        if (!numbers.cellNumbers.has(`x${parent.x}y${parent.y}`)) {
+        if (passed.has(this.getKey(parent))) return
+        if (!numbers.cellNumbers.has(this.getKey(parent))) {
           queue.push(parent)
         }
       })

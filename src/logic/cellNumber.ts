@@ -19,7 +19,7 @@ export class CellNumber extends Draw {
       count = this.getParents(cell, bombs).length
 
       if (count === 0) return
-      this.cellNumbers.set(`x${cell.x}y${cell.y}`, {...cell, count})
+      this.cellNumbers.set(this.getKey(cell), {...cell, count})
     })
   }
 

@@ -44,4 +44,8 @@ export abstract class Draw {
     
     return parents
   }
+
+  getKey({x, y}: Position) {
+    return `x${x}y${y}`
+  }
 }
