@@ -45,7 +45,14 @@ export abstract class Draw {
     return parents
   }
 
-  getKey({x, y}: Position) {
+  protected getKey({x, y}: Position) {
     return `x${x}y${y}`
+  }
+
+  protected clear() {
+    this.ctx.beginPath()
+    this.ctx.fillStyle = 'white'
+    this.ctx.fillRect(0, 0, this.width, this.height)
+    this.ctx.closePath()
   }
 }

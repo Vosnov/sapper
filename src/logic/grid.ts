@@ -1,5 +1,5 @@
 import { Bombs } from "./bomb";
-import { CellNumber } from "./cellNumber";
+import { CellNumber, CellNumberData } from "./cellNumber";
 import { Draw } from "./draw";
 import { Position } from "./sapper";
 
@@ -34,6 +34,8 @@ export class Grid extends Draw {
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
     this.canvas.addEventListener('mousedown', (e) => {
+      this.clear()
+
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
       console.log(this.clickedPosition, numbers.cellNumbers)
@@ -44,15 +46,22 @@ export class Grid extends Draw {
       }
 
       if (numbers.cellNumbers.has(this.getKey(this.clickedPosition))) {
-        this.openNumberCell()
+        this.openNumberCell(numbers, this.clickedPosition)
       } else {
         this.openNumberCells(numbers)
       }
+      
+      this.draw()
     })
   }
 
-  openNumberCell() {
-    console.log('Hello')
+  openNumberCell(cellNumber: CellNumber, position: Position) {
+    const numberData = cellNumber.cellNumbers.get(this.getKey(position))
+    if (numberData) {
+      const mapNumbers = new Map()
+      mapNumbers.set(this.getKey(position), numberData)
+      cellNumber.draw(mapNumbers)
+    }
   }
 
   openNumberCells(numbers: CellNumber) {
@@ -74,12 +83,20 @@ export class Grid extends Draw {
       })
     }
 
-    console.log(passed)
-    this.ctx.beginPath()
     passed.forEach(elem => {
+      const numberParents = this.getParents(elem, numbers.cellNumbers)
+      const mapNumberParents = new Map<string, CellNumberData>()
+
+      numberParents.forEach(number => {
+        mapNumberParents.set(this.getKey(number), number)
+      })
+
+      numbers.draw(mapNumberParents)
+
+      this.ctx.beginPath()
       this.ctx.fillStyle = 'black'
       this.ctx.fillRect(elem.x, elem.y, this.step, this.step)
+      this.ctx.closePath()
     })
-    this.ctx.closePath()
   }
 }

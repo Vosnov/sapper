@@ -23,12 +23,11 @@ export class CellNumber extends Draw {
     })
   }
 
-  draw() {
+  draw(cellNumbers = this.cellNumbers) {
     this.ctx.beginPath()
     const fontSize = 32;
     this.ctx.font = `${fontSize}px serif`;
-    console.log(this.cellNumbers)
-    this.cellNumbers.forEach((cell) => {
+    cellNumbers.forEach((cell) => {
       this.ctx.fillStyle = 'green'
       this.ctx.fillText(`${cell.count}`, cell.x + (this.step / 2) - (fontSize / 4), cell.y + (this.step / 2) + (fontSize / 3))
     })

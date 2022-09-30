@@ -30,7 +30,7 @@ export class Sapper {
 
   draw() {
     this.grid.draw()
-    this.bombs.draw()
-    this.cellNumbers.draw()
+    // this.bombs.draw()
+    // this.cellNumbers.draw()
   }
 }
