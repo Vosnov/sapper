@@ -1,7 +1,14 @@
 import { Bombs } from "./bomb";
 import { CellNumber, CellNumberData } from "./cellNumber";
 import { Draw } from "./draw";
-import { Position } from "./sapper";
+import { EventNames, Position } from "./sapper";
+
+type CellClickData = {
+  mapPassed?: Map<string, Position>
+  mapNumber?: Map<string, CellNumberData>
+}
+
+export type CellClickEvent = CustomEvent<CellClickData>
 
 export class Grid extends Draw {
   readonly map = new Map<string, Position>()
@@ -34,11 +41,9 @@ export class Grid extends Draw {
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
     this.canvas.addEventListener('mousedown', (e) => {
-      this.clear()
-
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
-      console.log(this.clickedPosition, numbers.cellNumbers)
+      // console.log(this.clickedPosition, numbers.cellNumbers)
 
       if (bombs.bombsMap.has(this.getKey(this.clickedPosition))) {
         console.log('dead')
@@ -50,53 +55,50 @@ export class Grid extends Draw {
       } else {
         this.openNumberCells(numbers)
       }
-      
-      this.draw()
     })
   }
 
   openNumberCell(cellNumber: CellNumber, position: Position) {
     const numberData = cellNumber.cellNumbers.get(this.getKey(position))
+    const mapNumber = new Map<string, CellNumberData>()
     if (numberData) {
-      const mapNumbers = new Map()
-      mapNumbers.set(this.getKey(position), numberData)
-      cellNumber.draw(mapNumbers)
+      mapNumber.set(this.getKey(position), {...numberData})
     }
+
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapNumber}, bubbles: true})
+    this.canvas.dispatchEvent(event)
   }
 
   openNumberCells(numbers: CellNumber) {
     const queue: Position[] = [this.clickedPosition]
-    const passed = new Map<string, Position>()
+    const mapPassed = new Map<string, Position>()
     let count = 0
     
     while(queue.length > 0 && count < 1000) {
       count++
       const position = (queue.pop() as Position)
       const parents = this.getParents(position, this.map)
-      passed.set(this.getKey(position), position)
+      mapPassed.set(this.getKey(position), {...position})
 
       parents.forEach(parent => {
-        if (passed.has(this.getKey(parent))) return
+        if (mapPassed.has(this.getKey(parent))) return
         if (!numbers.cellNumbers.has(this.getKey(parent))) {
           queue.push(parent)
         }
       })
     }
 
-    passed.forEach(elem => {
+    const mapNumber = new Map<string, CellNumberData>()
+
+    mapPassed.forEach(elem => {
       const numberParents = this.getParents(elem, numbers.cellNumbers)
-      const mapNumberParents = new Map<string, CellNumberData>()
 
       numberParents.forEach(number => {
-        mapNumberParents.set(this.getKey(number), number)
+        mapNumber.set(this.getKey(number), {...number})
       })
-
-      numbers.draw(mapNumberParents)
-
-      this.ctx.beginPath()
-      this.ctx.fillStyle = 'black'
-      this.ctx.fillRect(elem.x, elem.y, this.step, this.step)
-      this.ctx.closePath()
     })
+
+    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {mapPassed, mapNumber}, bubbles: true})
+    this.canvas.dispatchEvent(event)
   }
 }

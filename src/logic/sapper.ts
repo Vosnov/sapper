@@ -1,20 +1,28 @@
 import { Bombs } from "./bomb"
-import { CellNumber } from "./cellNumber"
-import { Grid } from "./grid"
+import { CellNumber, CellNumberData } from "./cellNumber"
+import { Draw } from "./draw"
+import { CellClickEvent, Grid } from "./grid"
 
 export type Position = {
   x: number
   y: number
 }
 
-export class Sapper {
+export enum EventNames {
+  CellClick = 'CellClick'
+}
+
+export class Sapper extends Draw {
   ctx: CanvasRenderingContext2D
-  step = 40
   grid: Grid 
   bombs: Bombs
   cellNumbers: CellNumber
 
+  mapPassed = new Map<string, Position>()
+  mapNumber = new Map<string, CellNumberData>()
+
   constructor(public canvas: HTMLCanvasElement) {
+    super(canvas, 40)
     this.ctx = (canvas.getContext('2d') as CanvasRenderingContext2D)
 
     this.cellNumbers = new CellNumber(canvas, this.step)
@@ -26,11 +34,28 @@ export class Sapper {
     this.cellNumbers.getBombsCount(this.grid.map, this.bombs.bombsMap)
 
     this.grid.setEventListeners(this.cellNumbers, this.bombs)
+
+    this.canvas.addEventListener(EventNames.CellClick, (((e: CellClickEvent) => {
+      e.detail.mapNumber?.forEach((value, key) => this.mapNumber.set(key, value))
+      e.detail.mapPassed?.forEach((value, key) => this.mapPassed.set(key, value))
+      this.draw()
+    }) as EventListener))
   }
 
   draw() {
+    this.clear()
     this.grid.draw()
-    // this.bombs.draw()
-    // this.cellNumbers.draw()
+
+    this.cellNumbers.draw(this.mapNumber)
+    this.drawPassed()
+  }
+
+  drawPassed() {
+    this.ctx.beginPath()
+    this.mapPassed.forEach(passed => {
+      this.ctx.fillStyle = 'black'
+      this.ctx.fillRect(passed.x, passed.y, this.step, this.step)
+    })
+    this.ctx.closePath()
   }
 }
