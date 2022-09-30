@@ -11,28 +11,12 @@ export class CellNumber extends Draw {
   cellNumbers = new Map<string, CellNumberData>()
 
   public getBombsCount(grid: Grid['map'], bombs: Bombs['bombsMap']) {
-    const angels: Position[] = [
-      {x: this.step, y: 0},
-      {x: -this.step, y: 0},
-      {x: 0, y: this.step},
-      {x: 0, y: -this.step},
-      {x: -this.step, y: -this.step},
-      {x: this.step, y: this.step},
-      {x: -this.step, y: this.step},
-      {x: this.step, y: -this.step},
-    ]
 
     grid.forEach((cell, cellKey) => {
       if (bombs.has(cellKey)) return
       let count = 0
 
-      angels.forEach(angel => {
-        const bomb = bombs.get(`x${cell.x + angel.x}y${cell.y + angel.y}`)
-
-        if (bomb) {
-          count++
-        }
-      })
+      count = this.getParents(cell, bombs).length
 
       if (count === 0) return
       this.cellNumbers.set(`x${cell.x}y${cell.y}`, {...cell, count})

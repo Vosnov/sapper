@@ -4,7 +4,7 @@ import { Position } from "./sapper";
 
 export class Bombs extends Draw {
   bombsMap = new Map<string, Position>()
-  bombsLimit = 12
+  bombsLimit = 10
 
   private createBomb(freePositions: Position[]) {
     const bomb: Position = {x: 0, y: 0}

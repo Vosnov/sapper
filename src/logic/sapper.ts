@@ -24,6 +24,8 @@ export class Sapper {
     this.grid.initGrid()
     this.bombs.generateBombs(this.grid.map)
     this.cellNumbers.getBombsCount(this.grid.map, this.bombs.bombsMap)
+
+    this.grid.setEventListeners(this.cellNumbers, this.bombs)
   }
 
   draw() {
