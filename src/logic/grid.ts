@@ -38,7 +38,7 @@ export class Grid extends Draw {
   }
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
-    this.canvas.addEventListener('mousedown', (e) => {
+    this.canvas.addEventListener('click', (e) => {
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
 

@@ -1,6 +1,7 @@
 import { Bombs } from "./bomb"
 import { CellNumber, CellNumberData } from "./cellNumber"
 import { Draw } from "./draw"
+import { Flag } from "./flag"
 import { CellClickEvent, Grid } from "./grid"
 
 export type Position = {
@@ -9,7 +10,8 @@ export type Position = {
 }
 
 export enum EventNames {
-  CellClick = 'CellClick'
+  CellClick = 'CellClick',
+  RightCellClick = 'RightCellClick',
 }
 
 export class Sapper extends Draw {
@@ -17,6 +19,7 @@ export class Sapper extends Draw {
   grid: Grid 
   bombs: Bombs
   cellNumbers: CellNumber
+  flag: Flag
 
   mapPassed = new Map<string, Position>()
   mapNumber = new Map<string, CellNumberData>()
@@ -29,6 +32,7 @@ export class Sapper extends Draw {
     this.cellNumbers = new CellNumber(canvas, this.step)
     this.bombs = new Bombs(canvas, this.step)
     this.grid = new Grid(canvas, this.step)
+    this.flag = new Flag(canvas, this.step)
 
     this.grid.initGrid()
     this.bombs.generateBombs(this.grid.map)
@@ -37,10 +41,16 @@ export class Sapper extends Draw {
     this.grid.setEventListeners(this.cellNumbers, this.bombs)
 
     this.canvas.addEventListener(EventNames.CellClick, (((e: CellClickEvent) => {
-      if (this.isBombClick) return
+      if (this.isBombClick) {
+        return
+      }
 
       if (e.detail.isBombClick) this.isBombClick = e.detail.isBombClick
 
+      this.draw()
+    }) as EventListener))
+
+    this.canvas.addEventListener(EventNames.RightCellClick, ((() => {
       this.draw()
     }) as EventListener))
   }
@@ -50,9 +60,13 @@ export class Sapper extends Draw {
 
     this.grid.drawClosedCells()
     this.cellNumbers.draw()
-    if (this.isBombClick) this.bombs.draw()
+    if (this.isBombClick) {
+      console.log('dead')
+      this.bombs.draw()
+    }
     this.grid.draw()
     this.bombs.draw()
+    this.flag.draw()
   }
 
 }

@@ -6,6 +6,7 @@ export enum DrawEntity {
   Number = 'Number',
   CloseCell = 'CloseCell',
   Passed = 'Passed',
+  Flag = 'Flag',
 }
 export abstract class Draw {
   protected ctx: CanvasRenderingContext2D
@@ -83,6 +84,10 @@ export abstract class Draw {
 
     if (entity === DrawEntity.Passed) {
       return this.ctx.drawImage(fieldImage, 0, 0, 64, 64, x, y, this.step, this.step)
+    }
+
+    if (entity === DrawEntity.Flag) {
+      return this.ctx.drawImage(fieldImage, 64 * 5, 0, 64, 64, x, y, this.step, this.step)
     }
   }
 }
