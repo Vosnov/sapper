@@ -1,4 +1,5 @@
 import { Draw, DrawEntity } from "./draw";
+import { Flag } from "./flag";
 import { Grid } from "./grid";
 import { Position } from "./sapper";
 export class Bombs extends Draw {
@@ -17,13 +18,29 @@ export class Bombs extends Draw {
     return bomb
   }
 
-  public draw(): void {
+  public draw(coloredBomb?: Position): void {
     this.ctx.beginPath()
     this.ctx.fillStyle = 'blue'
+
     this.bombsMap.forEach(bomb => {
       this.drawEntity(DrawEntity.Bomb, bomb)
+
+      if (coloredBomb && this.getKey(bomb) === this.getKey(coloredBomb)) {
+        this.drawEntity(DrawEntity.ColoredBomb, coloredBomb)
+      }
+
     })
     this.ctx.closePath()
+  }
+
+  drawClosedBombs(flagPositions: Flag['flagPositions']) {
+    this.bombsMap.forEach(bomb => {
+      flagPositions.forEach(flag => {
+        if (this.getKey(flag) === this.getKey(bomb)) {
+          this.drawEntity(DrawEntity.ClosedBomb, flag)
+        }
+      })
+    })
   }
 
   public generateBombs(grid: Grid['map']) {

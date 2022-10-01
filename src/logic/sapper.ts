@@ -50,7 +50,10 @@ export class Sapper extends Draw {
         this.isDead = true
       }
 
-      if (!this.isDead) this.draw()
+      this.draw()
+      if (this.isDead) {
+        clearInterval(this.interval)
+      }
     }, 1000 / 60)
   }
 
@@ -60,10 +63,10 @@ export class Sapper extends Draw {
     this.grid.drawClosedCells()
     this.cellNumbers.draw()
     if (this.isDead) {
-      this.bombs.draw()
+      this.bombs.draw(this.grid.clickedPosition)
     }
     this.grid.draw()
-    this.bombs.draw()
     this.flag.draw()
+    this.bombs.drawClosedBombs(this.flag.flagPositions)
   }
 }

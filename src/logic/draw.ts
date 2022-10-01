@@ -3,6 +3,8 @@ import { Position } from "./sapper"
 
 export enum DrawEntity {
   Bomb = 'Bomb',
+  ColoredBomb = 'ColoredBomb',
+  ClosedBomb = 'ClosedBomb',
   Number = 'Number',
   CloseCell = 'CloseCell',
   Passed = 'Passed',
@@ -71,7 +73,15 @@ export abstract class Draw {
 
   protected drawEntity(entity: DrawEntity, {x, y}: Position, count?: number) {
     if (entity === DrawEntity.Bomb) {
-      return this.ctx.drawImage(fieldImage, 128, 0, 64, 64, x, y, this.step, this.step)
+      return this.ctx.drawImage(fieldImage, 64 * 2, 0, 64, 64, x, y, this.step, this.step)
+    }
+
+    if (entity === DrawEntity.ColoredBomb) {
+      return this.ctx.drawImage(fieldImage, 64 * 3, 0, 64, 64, x, y, this.step, this.step)
+    }
+
+    if (entity === DrawEntity.ClosedBomb) {
+      return this.ctx.drawImage(fieldImage, 64 * 4, 0, 64, 64, x, y, this.step, this.step)
     }
 
     if (entity === DrawEntity.Number) {
