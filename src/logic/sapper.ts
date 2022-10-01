@@ -105,7 +105,9 @@ export class Sapper extends Draw {
     }
   }
 
-  clearInterval() {
+  public removeListeners(): void {
+    this.flag.removeListeners()
+    this.grid.removeListeners()
     clearInterval(this.interval)
   }
 }

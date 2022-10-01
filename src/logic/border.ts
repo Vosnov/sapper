@@ -25,11 +25,14 @@ export class Border extends Draw {
     }, 1000)
   }
 
+  flagCountListener(e: FlagCountEvent) {
+    this.drawBombCount(this.bombsLimit - e.detail)
+  }
+
+  bindedFlagCountListener = this.flagCountListener.bind(this)
+
   setFlagListener() {
-    document.addEventListener(EventNames.FlagCount, ((e: FlagCountEvent) => {
-      console.log('hello')
-      this.drawBombCount(this.bombsLimit - e.detail)
-    }) as EventListener)
+    document.addEventListener(EventNames.FlagCount, this.bindedFlagCountListener as EventListener)
   }
  
   drawBombCount(count: number) {
@@ -47,8 +50,9 @@ export class Border extends Draw {
     return '000'
   }
 
-  clearIntervals() {
+  public removeListeners(): void {
     this.clearTimer()
+    document.removeEventListener(EventNames.FlagCount, this.bindedFlagCountListener as EventListener)
   }
 
   clearTimer() {

@@ -18,6 +18,9 @@ export class Grid extends Draw {
 
   clickedPosition: ClickPosition = {x: 0, y: 0, isBomb: false}
 
+  numbers?: CellNumber
+  bombs?: Bombs
+
   initGrid() {
     for (let x = 0; x < Math.round(this.width / this.step); x ++) {
       for(let y = 0; y < Math.round(this.height / this.step); y++) {
@@ -40,23 +43,33 @@ export class Grid extends Draw {
     this.drawPassed()
   }
 
+  clickEventListener(e: MouseEvent) {
+    this.clickedPosition.isBomb = false
+    this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
+    this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
+
+    if (!this.bombs || !this.numbers) return
+
+    if (this.bombs.bombsMap.has(this.getKey(this.clickedPosition))) {
+      this.deadCellClick()
+      return;
+    }
+
+    if (this.numbers.cellNumbers.has(this.getKey(this.clickedPosition))) {
+      this.numberCellClick(this.numbers, this.clickedPosition)
+    } else {
+      this.emptyCellClick(this.numbers)
+    }
+  }
+
+  bindedClickEventListener = this.clickEventListener.bind(this)
+
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
-    this.canvas.addEventListener('click', (e) => {
-      this.clickedPosition.isBomb = false
-      this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
-      this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
+    this.canvas.addEventListener('click', this.bindedClickEventListener)
+  }
 
-      if (bombs.bombsMap.has(this.getKey(this.clickedPosition))) {
-        this.deadCellClick()
-        return;
-      }
-
-      if (numbers.cellNumbers.has(this.getKey(this.clickedPosition))) {
-        this.numberCellClick(numbers, this.clickedPosition)
-      } else {
-        this.emptyCellClick(numbers)
-      }
-    })
+  public removeListeners(): void {
+    this.canvas.removeEventListener('click', this.bindedClickEventListener)
   }
 
   deadCellClick() {

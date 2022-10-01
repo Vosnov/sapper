@@ -23,6 +23,10 @@ export abstract class Draw {
     this.height = canvas.height
   }
 
+  public removeListeners() {
+
+  }
+
   public draw() {
 
   }

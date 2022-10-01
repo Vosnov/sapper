@@ -12,25 +12,33 @@ export class Flag extends Draw {
 
   constructor(protected canvas: HTMLCanvasElement, public step: number) {
     super(canvas, step)
-
+    
     this.setEventListener()
   }
 
-  setEventListener() {
-    this.canvas.addEventListener('contextmenu', (e) => {
-      e.preventDefault()
-      this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
-      this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
+  contextmenuListener(e: MouseEvent) {
+    e.preventDefault()
+    this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
+    this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
 
-      if (this.flagPositions.has(this.getKey(this.clickedPosition))) {
-        this.removeFlag(this.clickedPosition)
-      } else {
-        this.setFlag(this.clickedPosition)
-      }
-      
-      const customEvent: FlagCountEvent = new CustomEvent(EventNames.FlagCount, {detail: this.flagPositions.size, bubbles: true})
-      document.dispatchEvent(customEvent)
-    })
+    if (this.flagPositions.has(this.getKey(this.clickedPosition))) {
+      this.removeFlag(this.clickedPosition)
+    } else {
+      this.setFlag(this.clickedPosition)
+    }
+    
+    const customEvent: FlagCountEvent = new CustomEvent(EventNames.FlagCount, {detail: this.flagPositions.size, bubbles: true})
+    document.dispatchEvent(customEvent)
+  }
+
+  bindedContextmenuListener = this.contextmenuListener.bind(this)
+
+  setEventListener() {
+    this.canvas.addEventListener('contextmenu', this.bindedContextmenuListener)
+  }
+
+  public removeListeners(): void {
+    this.canvas.removeEventListener('contextmenu', this.bindedContextmenuListener)
   }
 
   removeFlag(position: Position) {

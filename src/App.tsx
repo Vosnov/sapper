@@ -37,7 +37,7 @@ function App() {
     sapper.draw()
     setSapper(sapper)
 
-    return () => sapper.clearInterval()
+    return () => sapper.removeListeners()
   }, [ref, imageIsLoaded, selectedDifficult])
 
   useEffect(() => {
@@ -48,7 +48,7 @@ function App() {
 
     const border = new Border(ref2.current, sapper.bombs.bombsLimit)
     border.draw()
-    return () => border.clearIntervals()
+    return () => border.removeListeners()
   }, [ref2, sapper])
 
   return (
