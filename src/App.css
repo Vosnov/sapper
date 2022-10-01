@@ -1,3 +1,13 @@
-canvas {
-  border:  1px solid black;
+.App {
+  position: relative;
+}
+
+.sapper_body {
+  left: 20px;
+  top: 120px;
+  position: absolute;
+}
+
+.sapper_interface {
+  position: absolute;
 }

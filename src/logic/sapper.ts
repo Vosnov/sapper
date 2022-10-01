@@ -9,6 +9,30 @@ export type Position = {
   y: number
 }
 
+export enum Difficult {
+  VeryEasy = 'VeryEasy',
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+  VeryHard = 'VeryHard',
+  // Expert = 'Expert'
+}
+
+type DifficultData = {
+  widthCellCount: number
+  heightCellCount: number
+  bombsCount: number
+  step: number
+}
+
+export const difficultData: Record<Difficult, DifficultData> = {
+  [Difficult.VeryEasy]: {heightCellCount: 9, widthCellCount: 9, bombsCount: 10, step: 40},
+  [Difficult.Easy]: {heightCellCount: 16, widthCellCount: 16, bombsCount: 40, step: 40},
+  [Difficult.Medium]: {heightCellCount: 16, widthCellCount: 30, bombsCount: 99, step: 40},
+  [Difficult.Hard]: {heightCellCount: 50, widthCellCount: 50, bombsCount: 500, step: 20},
+  [Difficult.VeryHard]: {heightCellCount: 100, widthCellCount: 100, bombsCount: 2000, step: 10}
+}
+
 export class Sapper extends Draw {
   ctx: CanvasRenderingContext2D
   grid: Grid 
@@ -22,14 +46,21 @@ export class Sapper extends Draw {
   isDead = false
   interval?: NodeJS.Timer
 
-  constructor(public canvas: HTMLCanvasElement) {
-    super(canvas, 40)
+  constructor(public canvas: HTMLCanvasElement, difficult = Difficult.VeryEasy) {
+    const {bombsCount, widthCellCount, heightCellCount, step} = difficultData[difficult]
+
+    super(canvas, step)
+    this.canvas.width = widthCellCount * step
+    this.canvas.height = heightCellCount * step
+
     this.ctx = (canvas.getContext('2d') as CanvasRenderingContext2D)
 
     this.cellNumbers = new CellNumber(canvas, this.step)
     this.bombs = new Bombs(canvas, this.step)
     this.grid = new Grid(canvas, this.step)
     this.flag = new Flag(canvas, this.step)
+
+    this.bombs.bombsLimit = bombsCount
 
     this.grid.initGrid()
     this.bombs.generateBombs(this.grid.map)
@@ -67,6 +98,8 @@ export class Sapper extends Draw {
     }
     this.grid.draw()
     this.flag.draw()
-    this.bombs.drawClosedBombs(this.flag.flagPositions)
+    if (this.isDead) {
+      this.bombs.drawClosedBombs(this.flag.flagPositions)
+    }
   }
 }
