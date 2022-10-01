@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Difficult, Sapper } from './logic/sapper';
+import { Difficult, difficultData, Sapper } from './logic/sapper';
 import { SpriteField, SpriteNumbers, SpriteBorder } from './assets';
 import { Border } from './logic/border';
 
@@ -17,6 +16,7 @@ function App() {
   const ref2 = useRef<HTMLCanvasElement>(null)
   const [imageIsLoaded, setImageIsLoaded] = useState(false)
   const [sapper, setSapper] = useState<Sapper>()
+  const [selectedDifficult, setSelectedDifficult] = useState(Difficult.VeryEasy)
 
   useEffect(() => {
     fieldImage.onload = () => {
@@ -29,11 +29,12 @@ function App() {
   useEffect(() => {
     if (!ref.current || !imageIsLoaded) return
 
-    const sapper = new Sapper(ref.current, Difficult.Hard)
+    const sapper = new Sapper(ref.current, selectedDifficult)
     sapper.draw()
     setSapper(sapper)
 
-  }, [ref, imageIsLoaded])
+    return () => sapper.clearInterval()
+  }, [ref, imageIsLoaded, selectedDifficult])
 
   useEffect(() => {
     if (!ref2.current || !sapper) return
@@ -47,8 +48,15 @@ function App() {
 
   return (
     <div className="App">
-      <canvas className='sapper_interface' width={400} height={500} ref={ref2}/>
-      <canvas className='sapper_body' width={400} height={400} ref={ref}/>
+      <select value={selectedDifficult} onChange={(e) => setSelectedDifficult(e.target.value as Difficult)} name="difficult" id="difficult">
+        {Object.keys(difficultData).map(difficult => (
+          <option key={difficult}>{difficult}</option>
+        ))}
+      </select>
+      <div className='wrapper'>
+        <canvas className='sapper_interface' width={400} height={500} ref={ref2}/>
+        <canvas className='sapper_body' width={400} height={400} ref={ref}/>
+      </div>
     </div>
   );
 }

@@ -104,4 +104,8 @@ export class Sapper extends Draw {
       this.bombs.drawClosedBombs(this.flag.flagPositions)
     }
   }
+
+  clearInterval() {
+    clearInterval(this.interval)
+  }
 }
