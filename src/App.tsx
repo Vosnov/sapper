@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Difficult, difficultData, Sapper } from './logic/sapper';
-import { SpriteField, SpriteNumbers, SpriteBorder } from './assets';
+import { SpriteField, SpriteNumbers, SpriteBorder, SpriteScoreboard } from './assets';
 import { Border } from './logic/border';
 
 export const fieldImage = new Image()
@@ -10,6 +10,8 @@ export const numbersImage = new Image()
 numbersImage.src = SpriteNumbers
 export const borderImage = new Image()
 borderImage.src = SpriteBorder
+export const scoreboardImage = new Image()
+scoreboardImage.src = SpriteScoreboard
 
 function App() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -21,7 +23,9 @@ function App() {
   useEffect(() => {
     fieldImage.onload = () => {
       numbersImage.onload = () => {
-        setImageIsLoaded(true)
+        scoreboardImage.onload = () => {
+          setImageIsLoaded(true)
+        }
       }
     }
   }, [])
@@ -42,8 +46,9 @@ function App() {
     ref2.current.width = sapper.width + 40
     ref2.current.height = sapper.height + 140
 
-    const border = new Border(ref2.current)
+    const border = new Border(ref2.current, sapper.bombs.bombsLimit)
     border.draw()
+    return () => border.clearIntervals()
   }, [ref2, sapper])
 
   return (

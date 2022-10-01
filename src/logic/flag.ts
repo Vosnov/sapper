@@ -1,6 +1,11 @@
 import { Draw, DrawEntity } from "./draw";
 import { Position } from "./sapper";
 
+export enum EventNames {
+  FlagCount = 'FlagCount'
+}
+
+export type FlagCountEvent = CustomEvent<number>
 export class Flag extends Draw {
   flagPositions = new Map<string, Position>()
   clickedPosition: Position = {x: 0, y: 0}
@@ -22,7 +27,9 @@ export class Flag extends Draw {
       } else {
         this.setFlag(this.clickedPosition)
       }
-      console.log(e)
+      
+      const customEvent: FlagCountEvent = new CustomEvent(EventNames.FlagCount, {detail: this.flagPositions.size, bubbles: true})
+      document.dispatchEvent(customEvent)
     })
   }
 
