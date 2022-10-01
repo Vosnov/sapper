@@ -15,14 +15,14 @@ export class Border extends Draw {
     this.ctx.fillStyle = '#bfbfbf'
     this.ctx.fillRect(0, 0, this.width, this.height)
 
-    this.drawBorder(400, 140)
+    this.drawBorder(this.width, 100 + this.step)
     this.ctx.translate(0, 100)
 
-    this.drawBorder(400, 400)
+    this.drawBorder(this.width, this.height - 100)
     this.ctx.translate(0, 0)
 
     this.ctx.drawImage(borderImage, 184, 40, 40, 40, 0, 0, this.step, this.step)
-    this.ctx.drawImage(borderImage, 184 + 40, 40, 40, 40, 400 - this.step, 0, this.step, this.step)
+    this.ctx.drawImage(borderImage, 184 + 40, 40, 40, 40, this.width - this.step, 0, this.step, this.step)
     this.ctx.closePath()
   }
 
@@ -34,7 +34,7 @@ export class Border extends Draw {
 
     for(let i = 0; i < width; i += this.step) {
       this.ctx.drawImage(borderImage, 120, 40, 64, 40, i, 0, this.step, this.step)
-      this.ctx.drawImage(borderImage, 120, 40, 64, 40, i, width - this.step, this.step, this.step)
+      this.ctx.drawImage(borderImage, 120, 40, 64, 40, i, height - this.step, this.step, this.step)
     }
 
     this.ctx.drawImage(borderImage, 0, 0, 40, 40, 0, 0, this.step, this.step)

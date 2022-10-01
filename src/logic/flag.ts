@@ -5,7 +5,7 @@ export class Flag extends Draw {
   flagPositions = new Map<string, Position>()
   clickedPosition: Position = {x: 0, y: 0}
 
-  constructor(protected canvas: HTMLCanvasElement, protected step: number) {
+  constructor(protected canvas: HTMLCanvasElement, public step: number) {
     super(canvas, step)
 
     this.setEventListener()

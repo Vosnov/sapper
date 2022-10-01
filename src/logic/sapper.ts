@@ -52,6 +52,8 @@ export class Sapper extends Draw {
     super(canvas, step)
     this.canvas.width = widthCellCount * step
     this.canvas.height = heightCellCount * step
+    this.width = widthCellCount * step
+    this.height = heightCellCount * step
 
     this.ctx = (canvas.getContext('2d') as CanvasRenderingContext2D)
 

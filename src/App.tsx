@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Sapper } from './logic/sapper';
+import { Difficult, Sapper } from './logic/sapper';
 import { SpriteField, SpriteNumbers, SpriteBorder } from './assets';
 import { Border } from './logic/border';
 
@@ -15,24 +15,35 @@ borderImage.src = SpriteBorder
 function App() {
   const ref = useRef<HTMLCanvasElement>(null)
   const ref2 = useRef<HTMLCanvasElement>(null)
+  const [imageIsLoaded, setImageIsLoaded] = useState(false)
+  const [sapper, setSapper] = useState<Sapper>()
 
   useEffect(() => {
-    if (!ref.current) return
     fieldImage.onload = () => {
       numbersImage.onload = () => {
-        if (!ref.current) return
-        const sapper = new Sapper(ref.current)
-        sapper.draw()
+        setImageIsLoaded(true)
       }
     }
-  }, [ref])
+  }, [])
 
   useEffect(() => {
-    if (!ref2.current) return
+    if (!ref.current || !imageIsLoaded) return
+
+    const sapper = new Sapper(ref.current, Difficult.Hard)
+    sapper.draw()
+    setSapper(sapper)
+
+  }, [ref, imageIsLoaded])
+
+  useEffect(() => {
+    if (!ref2.current || !sapper) return
     
+    ref2.current.width = sapper.width + 40
+    ref2.current.height = sapper.height + 140
+
     const border = new Border(ref2.current)
     border.draw()
-  }, [ref2])
+  }, [ref2, sapper])
 
   return (
     <div className="App">

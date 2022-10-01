@@ -15,7 +15,7 @@ export abstract class Draw {
   width: number
   height: number
 
-  constructor(protected canvas: HTMLCanvasElement, protected step = 20) {
+  constructor(protected canvas: HTMLCanvasElement, public step = 20) {
     this.canvas = canvas
     this.step = step
     this.ctx = (canvas.getContext('2d') as CanvasRenderingContext2D)
