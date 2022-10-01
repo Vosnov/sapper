@@ -1,5 +1,5 @@
 import { Draw, DrawEntity } from "./draw";
-import { EventNames, Position } from "./sapper";
+import { Position } from "./sapper";
 
 export class Flag extends Draw {
   flagPositions = new Map<string, Position>()
@@ -17,11 +17,17 @@ export class Flag extends Draw {
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
 
-      this.setFlag(this.clickedPosition)
-
-      const event = new CustomEvent(EventNames.RightCellClick, {bubbles: true})
-      this.canvas.dispatchEvent(event)
+      if (this.flagPositions.has(this.getKey(this.clickedPosition))) {
+        this.removeFlag(this.clickedPosition)
+      } else {
+        this.setFlag(this.clickedPosition)
+      }
+      console.log(e)
     })
+  }
+
+  removeFlag(position: Position) {
+    this.flagPositions.delete(this.getKey(position))
   }
 
   setFlag(position: Position) {

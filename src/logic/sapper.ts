@@ -2,16 +2,11 @@ import { Bombs } from "./bomb"
 import { CellNumber, CellNumberData } from "./cellNumber"
 import { Draw } from "./draw"
 import { Flag } from "./flag"
-import { CellClickEvent, Grid } from "./grid"
+import { Grid } from "./grid"
 
 export type Position = {
   x: number
   y: number
-}
-
-export enum EventNames {
-  CellClick = 'CellClick',
-  RightCellClick = 'RightCellClick',
 }
 
 export class Sapper extends Draw {
@@ -23,7 +18,9 @@ export class Sapper extends Draw {
 
   mapPassed = new Map<string, Position>()
   mapNumber = new Map<string, CellNumberData>()
-  isBombClick = false
+
+  isDead = false
+  interval?: NodeJS.Timer
 
   constructor(public canvas: HTMLCanvasElement) {
     super(canvas, 40)
@@ -40,19 +37,21 @@ export class Sapper extends Draw {
 
     this.grid.setEventListeners(this.cellNumbers, this.bombs)
 
-    this.canvas.addEventListener(EventNames.CellClick, (((e: CellClickEvent) => {
-      if (this.isBombClick) {
-        return
+    this.setInterval()
+  }
+
+  checkFlagClick() {
+    return this.flag.flagPositions.has(this.getKey(this.grid.clickedPosition))
+  }
+
+  setInterval() {
+    this.interval = setInterval(() => {
+      if (!this.checkFlagClick() && this.grid.clickedPosition.isBomb) {
+        this.isDead = true
       }
 
-      if (e.detail.isBombClick) this.isBombClick = e.detail.isBombClick
-
-      this.draw()
-    }) as EventListener))
-
-    this.canvas.addEventListener(EventNames.RightCellClick, ((() => {
-      this.draw()
-    }) as EventListener))
+      if (!this.isDead) this.draw()
+    }, 1000 / 60)
   }
 
   draw() {
@@ -60,13 +59,11 @@ export class Sapper extends Draw {
 
     this.grid.drawClosedCells()
     this.cellNumbers.draw()
-    if (this.isBombClick) {
-      console.log('dead')
+    if (this.isDead) {
       this.bombs.draw()
     }
     this.grid.draw()
     this.bombs.draw()
     this.flag.draw()
   }
-
 }

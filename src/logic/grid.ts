@@ -1,7 +1,7 @@
 import { Bombs } from "./bomb";
 import { CellNumber } from "./cellNumber";
 import { Draw, DrawEntity } from "./draw";
-import { EventNames, Position } from "./sapper";
+import { Position } from "./sapper";
 
 type CellClickData = {
   isBombClick?: boolean
@@ -9,11 +9,14 @@ type CellClickData = {
 
 export type CellClickEvent = CustomEvent<CellClickData>
 
+export type ClickPosition ={
+  isBomb: boolean
+} & Position
 export class Grid extends Draw {
   readonly map = new Map<string, Position>()
   mapPassed = new Map<string, Position>();
 
-  clickedPosition: Position = {x: 0, y: 0}
+  clickedPosition: ClickPosition = {x: 0, y: 0, isBomb: false}
 
   initGrid() {
     for (let x = 0; x < Math.round(this.width / this.step); x ++) {
@@ -39,6 +42,7 @@ export class Grid extends Draw {
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
     this.canvas.addEventListener('click', (e) => {
+      this.clickedPosition.isBomb = false
       this.clickedPosition.x = Math.floor(e.offsetX / this.step) * this.step
       this.clickedPosition.y = Math.floor(e.offsetY / this.step) * this.step
 
@@ -56,15 +60,11 @@ export class Grid extends Draw {
   }
 
   deadCellClick() {
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {isBombClick: true}, bubbles: true})
-    this.canvas.dispatchEvent(event)
+    this.clickedPosition.isBomb = true
   }
 
   numberCellClick(cellNumber: CellNumber, position: Position) {
     cellNumber.setDrawNumber(position)
-
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {}, bubbles: true})
-    this.canvas.dispatchEvent(event)
   }
 
   emptyCellClick(numbers: CellNumber) {
@@ -89,9 +89,6 @@ export class Grid extends Draw {
       const numberParents = this.getParents(elem, numbers.cellNumbers)
       numberParents.forEach(number => numbers.setDrawNumber(number))
     })
-
-    const event = new CustomEvent<CellClickData>(EventNames.CellClick, {detail: {}, bubbles: true})
-    this.canvas.dispatchEvent(event)
   }
 
   drawPassed() {
