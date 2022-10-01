@@ -1,5 +1,5 @@
 import { Bombs } from "./bomb";
-import { Draw } from "./draw";
+import { Draw, DrawEntity } from "./draw";
 import { Grid } from "./grid";
 import { Position } from "./sapper";
 
@@ -36,8 +36,7 @@ export class CellNumber extends Draw {
     const fontSize = 32;
     this.ctx.font = `${fontSize}px serif`;
     this.drawCellNumbers.forEach((cell) => {
-      this.ctx.fillStyle = 'green'
-      this.ctx.fillText(`${cell.count}`, cell.x + (this.step / 2) - (fontSize / 4), cell.y + (this.step / 2) + (fontSize / 3))
+      this.drawEntity(DrawEntity.Number, cell, cell.count)
     })
     this.ctx.closePath()
   }

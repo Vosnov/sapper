@@ -1,6 +1,6 @@
 import { Bombs } from "./bomb";
 import { CellNumber } from "./cellNumber";
-import { Draw } from "./draw";
+import { Draw, DrawEntity } from "./draw";
 import { EventNames, Position } from "./sapper";
 
 type CellClickData = {
@@ -25,20 +25,15 @@ export class Grid extends Draw {
     }
   }
 
-  public draw(): void {
+  public drawClosedCells() {
     this.ctx.beginPath()
-    this.ctx.strokeStyle = 'red'
-    for (let i = 0; i <= this.width; i += this.step) {
-      this.ctx.moveTo(i, 0)
-      this.ctx.lineTo(i, this.height)
-    }
-    for(let i = 0; i <= this.height; i += this.step) {
-      this.ctx.moveTo(0, i)
-      this.ctx.lineTo(this.width, i)
-    }
-    this.ctx.stroke()
+    this.map.forEach(pos => {
+      this.drawEntity(DrawEntity.CloseCell, pos)
+    })
     this.ctx.closePath()
+  }
 
+  public draw(): void {
     this.drawPassed()
   }
 
@@ -102,8 +97,7 @@ export class Grid extends Draw {
   drawPassed() {
     this.ctx.beginPath()
     this.mapPassed.forEach(passed => {
-      this.ctx.fillStyle = 'black'
-      this.ctx.fillRect(passed.x, passed.y, this.step, this.step)
+      this.drawEntity(DrawEntity.Passed, passed)
     })
     this.ctx.closePath()
   }

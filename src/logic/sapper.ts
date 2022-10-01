@@ -47,10 +47,12 @@ export class Sapper extends Draw {
 
   draw() {
     this.clear()
-    this.grid.draw()
 
+    this.grid.drawClosedCells()
     this.cellNumbers.draw()
     if (this.isBombClick) this.bombs.draw()
+    this.grid.draw()
+    this.bombs.draw()
   }
 
 }

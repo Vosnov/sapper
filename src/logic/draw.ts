@@ -1,5 +1,12 @@
+import { fieldImage, numbersImage } from "../App"
 import { Position } from "./sapper"
 
+export enum DrawEntity {
+  Bomb = 'Bomb',
+  Number = 'Number',
+  CloseCell = 'CloseCell',
+  Passed = 'Passed',
+}
 export abstract class Draw {
   protected ctx: CanvasRenderingContext2D
   width: number
@@ -54,5 +61,28 @@ export abstract class Draw {
     this.ctx.fillStyle = 'white'
     this.ctx.fillRect(0, 0, this.width, this.height)
     this.ctx.closePath()
+  }
+
+  private drawNumber({x, y}: Position, count: number) {
+    const leftOffset = 64 * (count - 1)
+    return this.ctx.drawImage(numbersImage, leftOffset, 0, 64, 64, x, y, this.step, this.step)
+  }
+
+  protected drawEntity(entity: DrawEntity, {x, y}: Position, count?: number) {
+    if (entity === DrawEntity.Bomb) {
+      return this.ctx.drawImage(fieldImage, 128, 0, 64, 64, x, y, this.step, this.step)
+    }
+
+    if (entity === DrawEntity.Number) {
+      this.drawNumber({x, y}, count || 1)
+    }
+
+    if (entity === DrawEntity.CloseCell) {
+      return this.ctx.drawImage(fieldImage, 64, 0, 64, 64, x, y, this.step, this.step)
+    }
+
+    if (entity === DrawEntity.Passed) {
+      return this.ctx.drawImage(fieldImage, 0, 0, 64, 64, x, y, this.step, this.step)
+    }
   }
 }

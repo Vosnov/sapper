@@ -1,7 +1,7 @@
-import { Draw } from "./draw";
+import { fieldImage } from "../App";
+import { Draw, DrawEntity } from "./draw";
 import { Grid } from "./grid";
 import { Position } from "./sapper";
-
 export class Bombs extends Draw {
   bombsMap = new Map<string, Position>()
   bombsLimit = 10
@@ -22,7 +22,8 @@ export class Bombs extends Draw {
     this.ctx.beginPath()
     this.ctx.fillStyle = 'blue'
     this.bombsMap.forEach(bomb => {
-      this.ctx.fillRect(bomb.x, bomb.y, this.step, this.step)
+      this.drawEntity(DrawEntity.Bomb, bomb)
+      // this.ctx.fillRect(bomb.x, bomb.y, this.step, this.step)
     })
     this.ctx.closePath()
   }
