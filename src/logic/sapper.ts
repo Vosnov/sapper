@@ -43,7 +43,7 @@ export class Sapper extends Draw {
   mapNumber = new Map<string, CellNumberData>()
 
   isDead = false
-  interval?: NodeJS.Timer
+  shouldDraw = true
 
   constructor(public canvas: HTMLCanvasElement, difficult = Difficult.VeryEasy) {
     const {bombsCount, widthCellCount, heightCellCount, step} = difficultData[difficult]
@@ -66,25 +66,16 @@ export class Sapper extends Draw {
     this.cellNumbers.getBombsCount(this.grid.map, this.bombs.bombsMap)
 
     this.grid.setEventListeners(this.cellNumbers, this.bombs)
-
-    this.setInterval()
   }
 
   checkFlagClick() {
     return this.flag.flagPositions.has(this.getKey(this.grid.clickedPosition))
   }
 
-  setInterval() {
-    this.interval = setInterval(() => {
-      if (!this.checkFlagClick() && this.grid.clickedPosition.isBomb) {
-        this.isDead = true
-      }
-
-      this.draw()
-      if (this.isDead) {
-        clearInterval(this.interval)
-      }
-    }, 1000 / 60)
+  logicBeforeDraw() {
+    if (!this.checkFlagClick() && this.grid.clickedPosition.isBomb) {
+      this.isDead = true
+    }
   }
 
   draw() {
@@ -105,6 +96,5 @@ export class Sapper extends Draw {
   public removeListeners(): void {
     this.flag.removeListeners()
     this.grid.removeListeners()
-    clearInterval(this.interval)
   }
 }

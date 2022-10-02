@@ -46,7 +46,7 @@ function App() {
     ref2.current.width = sapper.width + 40
     ref2.current.height = sapper.height + 140
 
-    const border = new Border(ref2.current, sapper.bombs.bombsLimit)
+    const border = new Border(ref2.current, sapper)
     border.draw()
     return () => border.removeListeners()
   }, [ref2, sapper])

@@ -1,25 +1,37 @@
 import { borderImage, scoreboardImage } from "../App";
 import { Draw } from "./draw";
-import { EventNames, FlagCountEvent } from "./flag";
-import { Position } from "./sapper";
+import { Position, Sapper } from "./sapper";
 
 export class Border extends Draw {
   time = 0
   timerInterval?: NodeJS.Timer 
+  gameInterval?: NodeJS.Timer
 
-  constructor(public canvas: HTMLCanvasElement, public bombsLimit: number) {
+  constructor(public canvas: HTMLCanvasElement, public sapper: Sapper) {
     super(canvas, 20)
     
     this.startTimer()
-    this.setFlagListener()
+    this.startGame()
 
-    this.flagCountListener = this.flagCountListener.bind(this)
+    this.drawInterfaceBorder()
+  }
+
+  startGame() {
+    this.gameInterval = setInterval(() => {
+      this.sapper.logicBeforeDraw()
+      this.sapper.draw()
+      this.draw()
+
+      if (this.sapper.isDead) {
+        this.removeListeners()
+      }
+    }, 1000 / 60)
   }
 
   startTimer() {
     this.timerInterval = setInterval(() => {
       if (this.time === 999) {
-        this.clearTimer()
+        clearInterval(this.timerInterval)
         return
       }
       this.time++
@@ -27,15 +39,8 @@ export class Border extends Draw {
     }, 1000)
   }
 
-  flagCountListener(e: FlagCountEvent) {
-    this.drawBombCount(this.bombsLimit - e.detail)
-  }
-
-  setFlagListener() {
-    document.addEventListener(EventNames.FlagCount, this.flagCountListener as EventListener)
-  }
- 
-  drawBombCount(count: number) {
+  drawBombCount() {
+    const count = this.sapper.bombs.bombsLimit - this.sapper.flag.flagPositions.size
     this.drawNumbers({x: 30, y: 35},  this.convertNumber(count))
   }
 
@@ -51,18 +56,12 @@ export class Border extends Draw {
   }
 
   public removeListeners(): void {
-    this.clearTimer()
-    document.removeEventListener(EventNames.FlagCount, this.flagCountListener as EventListener)
-  }
-
-  clearTimer() {
     clearInterval(this.timerInterval)
+    clearInterval(this.gameInterval)
   }
 
   public draw(): void {
-    this.drawInterfaceBorder()
-
-    this.drawBombCount(this.bombsLimit)
+    this.drawBombCount()
     this.drawTimer()
   }
 

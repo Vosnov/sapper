@@ -1,10 +1,6 @@
 import { Draw, DrawEntity } from "./draw";
 import { Position } from "./sapper";
 
-export enum EventNames {
-  FlagCount = 'FlagCount'
-}
-
 export type FlagCountEvent = CustomEvent<number>
 export class Flag extends Draw {
   flagPositions = new Map<string, Position>()
@@ -12,10 +8,9 @@ export class Flag extends Draw {
 
   constructor(protected canvas: HTMLCanvasElement, public step: number) {
     super(canvas, step)
-    
-    this.setEventListener()
-
     this.contextmenuListener = this.contextmenuListener.bind(this)
+
+    this.setEventListener()
   }
 
   contextmenuListener(e: MouseEvent) {
@@ -28,9 +23,6 @@ export class Flag extends Draw {
     } else {
       this.setFlag(this.clickedPosition)
     }
-    
-    const customEvent: FlagCountEvent = new CustomEvent(EventNames.FlagCount, {detail: this.flagPositions.size, bubbles: true})
-    document.dispatchEvent(customEvent)
   }
 
   setEventListener() {
