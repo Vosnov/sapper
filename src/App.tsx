@@ -5,13 +5,12 @@ import { SpriteField, SpriteNumbers, SpriteBorder, SpriteScoreboard } from './as
 import { Game } from './logic/game';
 
 export const fieldImage = new Image()
-fieldImage.src = SpriteField
+
 export const numbersImage = new Image()
-numbersImage.src = SpriteNumbers
+
 export const borderImage = new Image()
-borderImage.src = SpriteBorder
+
 export const scoreboardImage = new Image()
-scoreboardImage.src = SpriteScoreboard
 
 function App() {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -20,10 +19,16 @@ function App() {
   const [selectedDifficult, setSelectedDifficult] = useState(Difficult.VeryEasy)
 
   useEffect(() => {
+    borderImage.src = SpriteBorder
+    fieldImage.src = SpriteField
+    numbersImage.src = SpriteNumbers
+    scoreboardImage.src = SpriteScoreboard
+    
     fieldImage.onload = () => {
       numbersImage.onload = () => {
         scoreboardImage.onload = () => {
           setImageIsLoaded(true)
+          console.log('helre')
         }
       }
     }
