@@ -34,7 +34,6 @@ export const difficultData: Record<Difficult, DifficultData> = {
 }
 
 export class Sapper extends Draw {
-  ctx: CanvasRenderingContext2D
   grid: Grid 
   bombs: Bombs
   cellNumbers: CellNumber
@@ -54,8 +53,6 @@ export class Sapper extends Draw {
     this.canvas.height = heightCellCount * step
     this.width = widthCellCount * step
     this.height = heightCellCount * step
-
-    this.ctx = (canvas.getContext('2d') as CanvasRenderingContext2D)
 
     this.cellNumbers = new CellNumber(canvas, this.step)
     this.bombs = new Bombs(canvas, this.step)

@@ -9,7 +9,7 @@ type CellClickData = {
 
 export type CellClickEvent = CustomEvent<CellClickData>
 
-export type ClickPosition ={
+export type ClickPosition = {
   isBomb: boolean
 } & Position
 export class Grid extends Draw {
@@ -20,6 +20,12 @@ export class Grid extends Draw {
 
   numbers?: CellNumber
   bombs?: Bombs
+
+  constructor(public canvas: HTMLCanvasElement, step?: number) {
+    super(canvas, step)
+
+    this.clickEventListener = this.clickEventListener.bind(this)
+  }
 
   initGrid() {
     for (let x = 0; x < Math.round(this.width / this.step); x ++) {
@@ -62,14 +68,15 @@ export class Grid extends Draw {
     }
   }
 
-  bindedClickEventListener = this.clickEventListener.bind(this)
 
   setEventListeners(numbers: CellNumber, bombs: Bombs) {
-    this.canvas.addEventListener('click', this.bindedClickEventListener)
+    this.bombs = bombs
+    this.numbers = numbers
+    this.canvas.addEventListener('click', this.clickEventListener)
   }
 
   public removeListeners(): void {
-    this.canvas.removeEventListener('click', this.bindedClickEventListener)
+    this.canvas.removeEventListener('click', this.clickEventListener)
   }
 
   deadCellClick() {

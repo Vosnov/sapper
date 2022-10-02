@@ -14,6 +14,8 @@ export class Flag extends Draw {
     super(canvas, step)
     
     this.setEventListener()
+
+    this.contextmenuListener = this.contextmenuListener.bind(this)
   }
 
   contextmenuListener(e: MouseEvent) {
@@ -31,14 +33,12 @@ export class Flag extends Draw {
     document.dispatchEvent(customEvent)
   }
 
-  bindedContextmenuListener = this.contextmenuListener.bind(this)
-
   setEventListener() {
-    this.canvas.addEventListener('contextmenu', this.bindedContextmenuListener)
+    this.canvas.addEventListener('contextmenu', this.contextmenuListener)
   }
 
   public removeListeners(): void {
-    this.canvas.removeEventListener('contextmenu', this.bindedContextmenuListener)
+    this.canvas.removeEventListener('contextmenu', this.contextmenuListener)
   }
 
   removeFlag(position: Position) {
