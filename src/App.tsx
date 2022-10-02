@@ -19,19 +19,17 @@ function App() {
   const [selectedDifficult, setSelectedDifficult] = useState(Difficult.VeryEasy)
 
   useEffect(() => {
-    borderImage.src = SpriteBorder
-    fieldImage.src = SpriteField
-    numbersImage.src = SpriteNumbers
-    scoreboardImage.src = SpriteScoreboard
-    
     fieldImage.onload = () => {
       numbersImage.onload = () => {
         scoreboardImage.onload = () => {
           setImageIsLoaded(true)
-          console.log('helre')
         }
       }
     }
+    borderImage.src = SpriteBorder
+    fieldImage.src = SpriteField
+    numbersImage.src = SpriteNumbers
+    scoreboardImage.src = SpriteScoreboard
   }, [])
 
   useEffect(() => {
