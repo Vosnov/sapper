@@ -2,18 +2,61 @@ import { borderImage, scoreboardImage } from "../App";
 import { Draw } from "./draw";
 import { Position, Sapper } from "./sapper";
 
+type PositionData = {
+  width: number
+  height: number
+} & Position
+
+enum Smile {
+  Normal,
+  Clicked,
+  Wow,
+  Dead
+}
 export class Border extends Draw {
   time = 0
   timerInterval?: NodeJS.Timer 
   gameInterval?: NodeJS.Timer
+  buttonPositionData: PositionData
+  buttonState = Smile.Normal
 
   constructor(public canvas: HTMLCanvasElement, public sapper: Sapper) {
     super(canvas, 20)
+
+    this.buttonPositionData = {
+      x: (this.width / 2) - 20,
+      y: 35,
+      width: 102 / 2,
+      height: 102 / 2
+    }
     
     this.startTimer()
     this.startGame()
 
     this.drawInterfaceBorder()
+
+    this.setButtonListeners()
+  }
+
+  setButtonListeners() {
+    const {x, y, width, height} = this.buttonPositionData
+    this.canvas.addEventListener('mousedown', (e) => {
+      if (this.checkMouseCross(e.offsetX, e.offsetY, x, y, width, height)) {
+        this.buttonState = Smile.Clicked
+      }
+    })
+
+    this.canvas.addEventListener('mouseup', () => {
+      this.buttonState = Smile.Normal
+    })
+
+    this.sapper.canvas.addEventListener('mousedown', (e) => {
+      this.buttonState = Smile.Wow
+    })
+
+    this.sapper.canvas.addEventListener('mouseup', () => {
+      this.buttonState = Smile.Normal
+    })
   }
 
   startGame() {
@@ -24,6 +67,8 @@ export class Border extends Draw {
 
       if (this.sapper.isDead) {
         this.removeListeners()
+        this.buttonState = Smile.Dead
+        this.draw()
       }
     }, 1000 / 60)
   }
@@ -63,6 +108,7 @@ export class Border extends Draw {
   public draw(): void {
     this.drawBombCount()
     this.drawTimer()
+    this.drawButton()
   }
 
   drawInterfaceBorder() {
@@ -103,5 +149,29 @@ export class Border extends Draw {
     this.ctx.drawImage(scoreboardImage, 52 * Number(count[0] || 0), 0, 52, 93, x, y, 52 / 2, 93 / 2)
     this.ctx.drawImage(scoreboardImage, 52 * Number(count[1] || 0), 0, 52, 93, x + 52 / 2, y, 52 / 2, 93 / 2)
     this.ctx.drawImage(scoreboardImage, 52 * Number(count[2] || 0), 0, 52, 93, x + 52, y, 52 / 2, 93 / 2)
+  }
+
+  drawButton() {
+    const {x, y, width, height} = this.buttonPositionData
+
+    let dX = 0
+
+    if (this.buttonState === Smile.Normal) {
+      dX = 0
+    }
+
+    if (this.buttonState === Smile.Clicked) {
+      dX = 102
+    }
+
+    if (this.buttonState === Smile.Wow) {
+      dX = 104 * 2
+    }
+
+    if (this.buttonState === Smile.Dead) {
+      dX = 104 * 3
+    }
+
+    this.ctx.drawImage(scoreboardImage, dX, 102, width * 2, height * 2, x, y, width, height)
   }
 }

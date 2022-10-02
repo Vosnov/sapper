@@ -104,4 +104,12 @@ export abstract class Draw {
       return this.ctx.drawImage(fieldImage, 64 * 5, 0, 64, 64, x, y, this.step, this.step)
     }
   }
+
+  protected checkMouseCross(mX: number, mY: number, x: number, y: number, width: number, height: number) {
+    if (mX >= x && mX <= x + width) {
+      if (mY >= y && mY <= y + height) {
+        return true
+      }
+    }
+  }
 }
