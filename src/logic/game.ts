@@ -8,6 +8,7 @@ export class Game {
   gameTimer?: NodeJS.Timer
 
   isDeadFlag = false
+  isWinFlag = false
 
   constructor (public gameCanvas: HTMLCanvasElement, public interfaceCanvas: HTMLCanvasElement, public difficult: Difficult) {
     this.sapper = new Sapper(gameCanvas, difficult)
@@ -26,6 +27,9 @@ export class Game {
 
     this.sapper = new Sapper(this.gameCanvas, this.difficult)
     this.sapperInterface = new SapperInterface(this.interfaceCanvas, this.sapper, this.reset.bind(this))
+
+    this.isDeadFlag = true
+    this.isWinFlag = true
 
     this.start()
     this.sapperInterface.startTimer()
@@ -48,6 +52,15 @@ export class Game {
         if (this.sapperInterface.buttonState !== Smile.Clicked) {
           this.sapperInterface.buttonState = Smile.Dead
         }
+      }
+
+      if (this.sapper.isWin && !this.isWinFlag) {
+        this.isWinFlag = true
+        alert('You win')
+        this.sapper.removeListeners()
+        this.sapperInterface.clearTimer()
+        this.sapperInterface.buttonState = Smile.Win
+        this.sapperInterface.drawButton()
       }
     }, 1000 / 60)
   }

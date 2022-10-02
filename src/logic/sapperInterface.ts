@@ -11,7 +11,8 @@ export enum Smile {
   Normal,
   Clicked,
   Wow,
-  Dead
+  Dead,
+  Win,
 }
 
 export class SapperInterface extends Draw {
@@ -51,10 +52,13 @@ export class SapperInterface extends Draw {
     this.sapper.canvas.addEventListener('mouseup', this.normalSmileListener)
   }
 
-  buttonClickListener() {
-    this.buttonClick()
-    if (this.sapper.isDead) return
-    this.buttonState = Smile.Normal
+  buttonClickListener(e: MouseEvent) {
+    const {x, y, width, height} = this.buttonPositionData
+    if (this.checkMouseCross(e.offsetX, e.offsetY, x, y, width, height)) {
+      this.buttonClick()
+      if (this.sapper.isDead) return
+      this.buttonState = Smile.Normal
+    }
   }
 
   deadSmileListener() {
@@ -180,6 +184,10 @@ export class SapperInterface extends Draw {
 
     if (this.buttonState === Smile.Dead) {
       dX = 104 * 3
+    }
+
+    if (this.buttonState === Smile.Win) {
+      dX = 104 * 4
     }
 
     this.ctx.drawImage(scoreboardImage, dX, 102, width * 2, height * 2, x, y, width, height)

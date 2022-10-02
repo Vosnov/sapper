@@ -7,7 +7,7 @@ export class Bombs extends Draw {
   bombsLimit = 10
 
   private createBomb(freePositions: Position[]) {
-    const bomb: Position = {x: 0, y: 0}
+    const bomb: Position = {x: -100, y: -100}
 
     if (freePositions.length === 0) return bomb
 

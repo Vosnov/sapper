@@ -43,6 +43,7 @@ export class Sapper extends Draw {
   mapNumber = new Map<string, CellNumberData>()
 
   isDead = false
+  isWin = false
 
   constructor(public canvas: HTMLCanvasElement, difficult = Difficult.VeryEasy) {
     const {bombsCount, widthCellCount, heightCellCount, step} = difficultData[difficult]
@@ -75,6 +76,11 @@ export class Sapper extends Draw {
     if (!this.checkFlagClick() && this.grid.clickedPosition.isBomb) {
       this.isDead = true
     }
+
+    if (this.isDead) return
+    if (this.cellNumbers.drawCellNumbers.size === this.cellNumbers.cellNumbers.size) {
+      this.isWin = true
+    }
   }
 
   draw() {
@@ -82,11 +88,12 @@ export class Sapper extends Draw {
 
     this.grid.drawClosedCells()
     this.cellNumbers.draw()
-    if (this.isDead) {
+    if (this.isDead || this.isWin) {
       this.bombs.draw(this.grid.clickedPosition)
     }
     this.grid.draw()
     this.flag.draw()
+    this.bombs.draw(this.grid.clickedPosition)
     if (this.isDead) {
       this.bombs.drawClosedBombs(this.flag.flagPositions)
     }
