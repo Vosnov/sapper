@@ -12,32 +12,22 @@ export const borderImage = new Image()
 
 export const scoreboardImage = new Image()
 
+borderImage.src = SpriteBorder
+fieldImage.src = SpriteField
+numbersImage.src = SpriteNumbers
+scoreboardImage.src = SpriteScoreboard
+
 function App() {
   const ref = useRef<HTMLCanvasElement>(null)
   const ref2 = useRef<HTMLCanvasElement>(null)
-  const [imageIsLoaded, setImageIsLoaded] = useState(false)
   const [selectedDifficult, setSelectedDifficult] = useState(Difficult.VeryEasy)
 
   useEffect(() => {
-    fieldImage.onload = () => {
-      numbersImage.onload = () => {
-        scoreboardImage.onload = () => {
-          setImageIsLoaded(true)
-        }
-      }
-    }
-    borderImage.src = SpriteBorder
-    fieldImage.src = SpriteField
-    numbersImage.src = SpriteNumbers
-    scoreboardImage.src = SpriteScoreboard
-  }, [])
-
-  useEffect(() => {
-    if (!ref2.current || !ref.current || !imageIsLoaded) return
+    if (!ref2.current || !ref.current) return
     const game = new Game(ref.current, ref2.current, selectedDifficult)
     
     return () => game.removeListeners()
-  }, [ref2, ref, imageIsLoaded, selectedDifficult])
+  }, [ref2, ref, selectedDifficult])
 
   return (
     <div className="App">
