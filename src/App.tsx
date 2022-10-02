@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import { Difficult, difficultData, Sapper } from './logic/sapper';
 import { SpriteField, SpriteNumbers, SpriteBorder, SpriteScoreboard } from './assets';
-import { Border } from './logic/border';
+import { SapperInterface } from './logic/sapperInterface';
+import { Game } from './logic/game';
 
 export const fieldImage = new Image()
 fieldImage.src = SpriteField
@@ -17,7 +18,6 @@ function App() {
   const ref = useRef<HTMLCanvasElement>(null)
   const ref2 = useRef<HTMLCanvasElement>(null)
   const [imageIsLoaded, setImageIsLoaded] = useState(false)
-  const [sapper, setSapper] = useState<Sapper>()
   const [selectedDifficult, setSelectedDifficult] = useState(Difficult.VeryEasy)
 
   useEffect(() => {
@@ -31,25 +31,11 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!ref.current || !imageIsLoaded) return
-
-    const sapper = new Sapper(ref.current, selectedDifficult)
-    sapper.draw()
-    setSapper(sapper)
-
-    return () => sapper.removeListeners()
-  }, [ref, imageIsLoaded, selectedDifficult])
-
-  useEffect(() => {
-    if (!ref2.current || !sapper) return
+    if (!ref2.current || !ref.current || !imageIsLoaded) return
+    const game = new Game(ref.current, ref2.current, selectedDifficult)
     
-    ref2.current.width = sapper.width + 40
-    ref2.current.height = sapper.height + 140
-
-    const border = new Border(ref2.current, sapper)
-    border.draw()
-    return () => border.removeListeners()
-  }, [ref2, sapper])
+    return () => game.removeListeners()
+  }, [ref2, ref, imageIsLoaded, selectedDifficult])
 
   return (
     <div className="App">

@@ -43,7 +43,6 @@ export class Sapper extends Draw {
   mapNumber = new Map<string, CellNumberData>()
 
   isDead = false
-  shouldDraw = true
 
   constructor(public canvas: HTMLCanvasElement, difficult = Difficult.VeryEasy) {
     const {bombsCount, widthCellCount, heightCellCount, step} = difficultData[difficult]

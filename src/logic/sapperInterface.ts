@@ -7,20 +7,21 @@ type PositionData = {
   height: number
 } & Position
 
-enum Smile {
+export enum Smile {
   Normal,
   Clicked,
   Wow,
   Dead
 }
-export class Border extends Draw {
+
+export class SapperInterface extends Draw {
   time = 0
   timerInterval?: NodeJS.Timer 
   gameInterval?: NodeJS.Timer
   buttonPositionData: PositionData
   buttonState = Smile.Normal
 
-  constructor(public canvas: HTMLCanvasElement, public sapper: Sapper) {
+  constructor(public canvas: HTMLCanvasElement, public sapper: Sapper, private buttonClick: () => void) {
     super(canvas, 20)
 
     this.buttonPositionData = {
@@ -29,59 +30,63 @@ export class Border extends Draw {
       width: 102 / 2,
       height: 102 / 2
     }
-    
-    this.startTimer()
-    this.startGame()
 
+    this.clickedSmileListener = this.clickedSmileListener.bind(this)
+    this.deadSmileListener = this.deadSmileListener.bind(this)
+    this.normalSmileListener = this.normalSmileListener.bind(this)
+    this.buttonClickListener = this.buttonClickListener.bind(this)
+    
     this.drawInterfaceBorder()
 
     this.setButtonListeners()
   }
 
   setButtonListeners() {
-    const {x, y, width, height} = this.buttonPositionData
-    this.canvas.addEventListener('mousedown', (e) => {
-      if (this.checkMouseCross(e.offsetX, e.offsetY, x, y, width, height)) {
-        this.buttonState = Smile.Clicked
-      }
-    })
+    this.canvas.addEventListener('mousedown', this.clickedSmileListener)
 
-    this.canvas.addEventListener('mouseup', () => {
-      this.buttonState = Smile.Normal
-    })
+    this.canvas.addEventListener('mouseup', this.buttonClickListener)
 
-    this.sapper.canvas.addEventListener('mousedown', (e) => {
-      this.buttonState = Smile.Wow
-    })
+    this.sapper.canvas.addEventListener('mousedown', this.deadSmileListener)
 
-    this.sapper.canvas.addEventListener('mouseup', () => {
-      this.buttonState = Smile.Normal
-    })
+    this.sapper.canvas.addEventListener('mouseup', this.normalSmileListener)
   }
 
-  startGame() {
-    this.gameInterval = setInterval(() => {
-      this.sapper.logicBeforeDraw()
-      this.sapper.draw()
-      this.draw()
+  buttonClickListener() {
+    this.buttonClick()
+    if (this.sapper.isDead) return
+    this.buttonState = Smile.Normal
+  }
 
-      if (this.sapper.isDead) {
-        this.removeListeners()
-        this.buttonState = Smile.Dead
-        this.draw()
-      }
-    }, 1000 / 60)
+  deadSmileListener() {
+    if (this.sapper.isDead) return
+    this.buttonState = Smile.Wow
+  }
+
+  normalSmileListener() {
+    if (this.sapper.isDead) return
+    this.buttonState = Smile.Normal
+  }
+
+  clickedSmileListener(e: MouseEvent) {
+    const {x, y, width, height} = this.buttonPositionData
+    if (this.checkMouseCross(e.offsetX, e.offsetY, x, y, width, height)) {
+      this.buttonState = Smile.Clicked
+    }
   }
 
   startTimer() {
     this.timerInterval = setInterval(() => {
       if (this.time === 999) {
-        clearInterval(this.timerInterval)
+        this.clearTimer()
         return
       }
       this.time++
       this.drawTimer()
     }, 1000)
+  }
+
+  clearTimer() {
+    clearInterval(this.timerInterval)
   }
 
   drawBombCount() {
@@ -103,6 +108,11 @@ export class Border extends Draw {
   public removeListeners(): void {
     clearInterval(this.timerInterval)
     clearInterval(this.gameInterval)
+
+    this.canvas.removeEventListener('mousedown', this.clickedSmileListener)
+    this.canvas.removeEventListener('mouseup', this.normalSmileListener)
+    this.sapper.canvas.removeEventListener('mousedown', this.deadSmileListener)
+    this.sapper.canvas.removeEventListener('mouseup', this.normalSmileListener)
   }
 
   public draw(): void {
