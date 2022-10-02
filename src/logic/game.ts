@@ -28,8 +28,8 @@ export class Game {
     this.sapper = new Sapper(this.gameCanvas, this.difficult)
     this.sapperInterface = new SapperInterface(this.interfaceCanvas, this.sapper, this.reset.bind(this))
 
-    this.isDeadFlag = true
-    this.isWinFlag = true
+    this.isDeadFlag = false
+    this.isWinFlag = false
 
     this.start()
     this.sapperInterface.startTimer()

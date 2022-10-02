@@ -4,7 +4,7 @@ import { Position } from "./sapper";
 export type FlagCountEvent = CustomEvent<number>
 export class Flag extends Draw {
   flagPositions = new Map<string, Position>()
-  clickedPosition: Position = {x: 0, y: 0}
+  clickedPosition: Position = {x: -100, y: -100}
 
   constructor(protected canvas: HTMLCanvasElement, public step: number) {
     super(canvas, step)

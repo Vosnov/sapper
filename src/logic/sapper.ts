@@ -93,7 +93,7 @@ export class Sapper extends Draw {
     }
     this.grid.draw()
     this.flag.draw()
-    this.bombs.draw(this.grid.clickedPosition)
+    // this.bombs.draw(this.grid.clickedPosition)
     if (this.isDead) {
       this.bombs.drawClosedBombs(this.flag.flagPositions)
     }

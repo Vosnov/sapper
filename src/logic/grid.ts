@@ -16,7 +16,7 @@ export class Grid extends Draw {
   readonly map = new Map<string, Position>()
   mapPassed = new Map<string, Position>();
 
-  clickedPosition: ClickPosition = {x: 0, y: 0, isBomb: false}
+  clickedPosition: ClickPosition = {x: -100, y: -100, isBomb: false}
 
   numbers?: CellNumber
   bombs?: Bombs
