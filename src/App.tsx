@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-import { Difficult, difficultData, Sapper } from './logic/sapper';
+import { Difficult, difficultData} from './logic/sapper';
 import { SpriteField, SpriteNumbers, SpriteBorder, SpriteScoreboard } from './assets';
-import { SapperInterface } from './logic/sapperInterface';
 import { Game } from './logic/game';
 
 export const fieldImage = new Image()

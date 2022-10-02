@@ -110,7 +110,7 @@ export class SapperInterface extends Draw {
     clearInterval(this.gameInterval)
 
     this.canvas.removeEventListener('mousedown', this.clickedSmileListener)
-    this.canvas.removeEventListener('mouseup', this.normalSmileListener)
+    this.canvas.removeEventListener('mouseup', this.buttonClickListener)
     this.sapper.canvas.removeEventListener('mousedown', this.deadSmileListener)
     this.sapper.canvas.removeEventListener('mouseup', this.normalSmileListener)
   }
