@@ -6,14 +6,11 @@ export class Bombs extends Draw {
   bombsMap = new Map<string, Position>()
   bombsLimit = 10
 
-  private createBomb(freePositions: Position[]) {
+  private createBomb(freePositions: Position) {
     const bomb: Position = {x: -100, y: -100}
 
-    if (freePositions.length === 0) return bomb
-
-    const rndPos = this.randomInteger(0, freePositions.length - 1)
-    bomb.x = freePositions[rndPos].x
-    bomb.y = freePositions[rndPos].y
+    bomb.x = freePositions.x
+    bomb.y = freePositions.y
 
     return bomb
   }
@@ -43,16 +40,30 @@ export class Bombs extends Draw {
     })
   }
 
+  shuffle<T>(array: Array<T>) {
+    let currentIndex = array.length,  randomIndex;
+  
+    while (currentIndex !== 0) {
+  
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+  
+    return array;
+  }
+  
   public generateBombs(grid: Grid['map']) {
-    for (let i = 0; i <= this.bombsLimit; i++) {
-      const freePositions: Position[] = []
-      grid.forEach((cell, cellKey) => {
-        if (!this.bombsMap.has(cellKey)) {
-          freePositions.push(cell)
-        }
-      })
+    const freePositions: Position[] = Array.from(grid.values())
 
-      const bomb = this.createBomb(freePositions)
+    this.shuffle(freePositions)
+
+    for (let i = 0; i <= this.bombsLimit; i++) {
+      if (i > freePositions.length - 1) return
+      const bomb = this.createBomb(freePositions[i])
+
       this.bombsMap.set(this.getKey(bomb), bomb)
     }
   }
